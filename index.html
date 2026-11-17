@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#0B0B1A">
 <title>JASON BOT AI — Créé par Jason Aloma 🇨🇩</title>
 
-<link rel="icon" type="image/png" href="./logo.png">
-<link rel="shortcut icon" type="image/png" href="./logo.png">
-<link rel="apple-touch-icon" href="./logo.png">
+<link rel="icon" type="image/png" href="./file_00000000760c82088f07dedfd4054f40.png">
+<link rel="shortcut icon" type="image/png" href="./file_00000000760c82088f07dedfd4054f40.png">
+<link rel="apple-touch-icon" href="./file_00000000760c82088f07dedfd4054f40.png">
 
-<meta property="og:image" content="./logo.png">
+<meta property="og:image" content="./file_00000000760c82088f07dedfd4054f40.png">
 <meta property="og:title" content="JASON BOT AI - Créé par Jason Aloma 🇨🇩">
 <meta property="og:description" content="JASON BOT AI - L'IA congolaise créée par Jason Aloma">
 
@@ -292,7 +292,7 @@ tab-size:2;max-width:100%
 <h3>
 <span class="drawer-logo-wrap">
 J
-<img src="./logo.png?v=3" alt="" onerror="this.remove()">
+<img src="./file_00000000760c82088f07dedfd4054f40.png?v=4" alt="" onerror="this.remove()">
 </span>
 JASON BOT <span>AI</span>
 </h3>
@@ -312,7 +312,7 @@ Fondateur : Jason Aloma 🇨🇩<br>Développeur congolais
 <button class="menu" onclick="toggleMenu(true)">☰</button>
 <div class="logo-wrap">
 J
-<img src="./logo.png?v=3" alt="" onerror="this.remove()">
+<img src="./file_00000000760c82088f07dedfd4054f40.png?v=4" alt="" onerror="this.remove()">
 </div>
 <div class="brand">
 <b>JASON BOT AI</b>
@@ -340,7 +340,7 @@ J
 <section class="welcome" id="welcome">
 <div class="welcome-logo-wrap">
 J
-<img src="./logo.png?v=3" alt="" onerror="this.remove()">
+<img src="./file_00000000760c82088f07dedfd4054f40.png?v=4" alt="" onerror="this.remove()">
 </div>
 <h1>Bonjour <span id="welcomeName"></span> 👋</h1>
 <p>
@@ -424,7 +424,7 @@ function getCurrentChatObj(){let c=allChats.find(x=>x.id===currentChatId);if(!c)
 function openChat(id){const chat=allChats.find(x=>x.id===id);if(!chat)return;currentChatId=id;saveAllChats();history=chat.messages.map(m=>({role:m.role,content:m.content}));messages.innerHTML="";if(!history.length){showWelcome();}else{history.forEach(m=>addMessage(m.role,m.content,m.image,true));}renderHistList();toggleMenu(false);}
 function deleteChat(id){if(!confirm("Supprimer cette conversation ?"))return;allChats=allChats.filter(x=>x.id!==id);if(currentChatId===id){currentChatId=null;localStorage.removeItem("jason_current_chat");}saveAllChats();renderHistList();if(!allChats.length)newChat();}
 function clearAllChats(){if(!confirm("Effacer TOUT l'historique ?"))return;allChats=[];currentChatId=null;localStorage.removeItem("jason_all_chats");localStorage.removeItem("jason_current_chat");saveAllChats();renderHistList();newChat();}
-function showWelcome(){messages.innerHTML=`<section class="welcome" id="welcome"><div class="welcome-logo-wrap">J<img src="./logo.png?v=3" alt="" onerror="this.remove()"></div><h1>Bonjour ${escapeHTML(jasonBotCall)} 👋</h1><p>Je suis <b>JASON BOT AI</b>. Je parle <b id="welcomeTone">${escapeHTML(currentTone.toLowerCase())}</b> avec toi. Je suis créé par <b>Jason Aloma 🇨🇩</b>.</p><div class="suggestions"><button class="suggest" data-prompt="Explique-moi JavaScript comme si j'avais 10 ans"><b>💡 Explique-moi</b><span>JavaScript comme si j'avais 10 ans</span></button><button class="suggest" data-prompt="Code-moi une application HTML complète"><b>💻 Génère du code</b><span>HTML, CSS, JavaScript</span></button></div><p style="font-size:10px;margin-top:12px">Fondateur : Jason Aloma 🇨🇩 · Développeur congolais</p></section>`;document.querySelectorAll(".suggest").forEach(b=>{b.onclick=()=>{input.value=b.dataset.prompt;sendMessage(b.dataset.prompt);};});}
+function showWelcome(){messages.innerHTML=`<section class="welcome" id="welcome"><div class="welcome-logo-wrap">J<img src="./file_00000000760c82088f07dedfd4054f40.png?v=4" alt="" onerror="this.remove()"></div><h1>Bonjour ${escapeHTML(jasonBotCall)} 👋</h1><p>Je suis <b>JASON BOT AI</b>. Je parle <b id="welcomeTone">${escapeHTML(currentTone.toLowerCase())}</b> avec toi. Je suis créé par <b>Jason Aloma 🇨🇩</b>.</p><div class="suggestions"><button class="suggest" data-prompt="Explique-moi JavaScript comme si j'avais 10 ans"><b>💡 Explique-moi</b><span>JavaScript comme si j'avais 10 ans</span></button><button class="suggest" data-prompt="Code-moi une application HTML complète"><b>💻 Génère du code</b><span>HTML, CSS, JavaScript</span></button></div><p style="font-size:10px;margin-top:12px">Fondateur : Jason Aloma 🇨🇩 · Développeur congolais</p></section>`;document.querySelectorAll(".suggest").forEach(b=>{b.onclick=()=>{input.value=b.dataset.prompt;sendMessage(b.dataset.prompt);};});}
 function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function toggleMenu(open){$("drawer").classList.toggle("open",open);$("overlay").classList.toggle("show",open);if(open)renderHistList();}
 $("overlay").onclick=()=>toggleMenu(false);
