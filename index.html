@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,11 +6,11 @@
 <meta name="theme-color" content="#0B0B1A">
 <title>JASON BOT AI — Créé par Jason Aloma 🇨🇩</title>
 
-<link rel="icon" type="image/png" href="./icon.png">
-<link rel="shortcut icon" type="image/png" href="./icon.png">
-<link rel="apple-touch-icon" href="./icon.png">
+<link rel="icon" type="image/png" href="./logo.png">
+<link rel="shortcut icon" type="image/png" href="./logo.png">
+<link rel="apple-touch-icon" href="./logo.png">
 
-<meta property="og:image" content="./icon.png">
+<meta property="og:image" content="./logo.png">
 <meta property="og:title" content="JASON BOT AI - Créé par Jason Aloma 🇨🇩">
 <meta property="og:description" content="JASON BOT AI - L'IA congolaise créée par Jason Aloma">
 
@@ -46,8 +45,6 @@ border:1px solid var(--line);background:#1E1E35;
 color:#00d4ff;font-size:18px;display:grid;
 place-items:center;cursor:pointer
 }
-
-/* LOGOS icon.png */
 .logo-wrap,.drawer-logo-wrap,.welcome-logo-wrap{
 display:grid;place-items:center;position:relative;
 overflow:hidden;flex-shrink:0;font-weight:900;color:#00d4ff
@@ -71,9 +68,6 @@ margin:0 auto 10px
 position:absolute;inset:0;width:100%;height:100%;
 object-fit:cover;z-index:2
 }
-.logo-wrap img[hidden],.drawer-logo-wrap img[hidden],
-.welcome-logo-wrap img[hidden]{display:none}
-
 .brand{flex:1;min-width:0}
 .brand b{font-size:15px;letter-spacing:1px}
 .brand small{
@@ -298,7 +292,7 @@ tab-size:2;max-width:100%
 <h3>
 <span class="drawer-logo-wrap">
 J
-<img src="./icon.png" alt="Logo JASON BOT AI" onerror="this.remove()">
+<img src="./logo.png?v=3" alt="" onerror="this.remove()">
 </span>
 JASON BOT <span>AI</span>
 </h3>
@@ -318,7 +312,7 @@ Fondateur : Jason Aloma 🇨🇩<br>Développeur congolais
 <button class="menu" onclick="toggleMenu(true)">☰</button>
 <div class="logo-wrap">
 J
-<img src="./icon.png" alt="Logo JASON BOT AI" onerror="this.remove()">
+<img src="./logo.png?v=3" alt="" onerror="this.remove()">
 </div>
 <div class="brand">
 <b>JASON BOT AI</b>
@@ -346,7 +340,7 @@ J
 <section class="welcome" id="welcome">
 <div class="welcome-logo-wrap">
 J
-<img src="./icon.png" alt="Logo JASON BOT AI" onerror="this.remove()">
+<img src="./logo.png?v=3" alt="" onerror="this.remove()">
 </div>
 <h1>Bonjour <span id="welcomeName"></span> 👋</h1>
 <p>
@@ -407,12 +401,7 @@ const API_URL="https://davbot.pages.dev/api/intelligence-artificielle/ask";
 const $=id=>document.getElementById(id);
 const messages=$("messages");
 const input=$("prompt");
-
-function getSetting(key,def=""){
-const v=localStorage.getItem("jason_"+key);
-return v!==null&&v!==""?v:def;
-}
-
+function getSetting(key,def=""){const v=localStorage.getItem("jason_"+key);return v!==null&&v!==""?v:def;}
 const jasonUserName=getSetting("userName","");
 const jasonBotCall=getSetting("botCall","Patron");
 const jasonBotRules=getSetting("botRules","");
@@ -423,618 +412,50 @@ const jasonUserInterest=getSetting("userInterest","");
 const jasonAnswerLength=getSetting("answerLength","Normale");
 const jasonClashAuto=localStorage.getItem("jason_swClash")==="1";
 const jasonVoice=localStorage.getItem("jason_swVoice")==="1";
-
-let history=[];
-let selectedImage=null;
-let busy=false;
+let history=[];let selectedImage=null;let busy=false;
 let currentTone=localStorage.getItem("jason_tone")||getSetting("defaultTone","Amical");
-
-let allChats=[];
-try{
-allChats=JSON.parse(localStorage.getItem("jason_all_chats")||"[]");
-}catch(e){allChats=[];}
-
+let allChats=[];try{allChats=JSON.parse(localStorage.getItem("jason_all_chats")||"[]");}catch(e){allChats=[];}
 let currentChatId=localStorage.getItem("jason_current_chat")||null;
-
-function saveAllChats(){
-localStorage.setItem("jason_all_chats",JSON.stringify(allChats.slice(-30)));
-if(currentChatId)localStorage.setItem("jason_current_chat",currentChatId);
-}
-
-function getChatTitle(chat){
-const first=chat.messages.find(m=>m.role==="user");
-if(first)return first.content.slice(0,38);
-return "Nouvelle conversation";
-}
-
-function renderHistList(){
-const list=$("histList");
-if(!allChats.length){
-list.innerHTML='<div class="histEmpty">Aucune ancienne conversation.<br>Écris un message, elle apparaîtra ici.</div>';
-return;
-}
-list.innerHTML="";
-[...allChats].reverse().forEach(chat=>{
-const item=document.createElement("div");
-item.className="histItem"+(chat.id===currentChatId?" active":"");
-const sp=document.createElement("span");
-sp.textContent="💬 "+getChatTitle(chat);
-sp.onclick=()=>openChat(chat.id);
-const del=document.createElement("button");
-del.textContent="✕";
-del.onclick=e=>{
-e.stopPropagation();
-deleteChat(chat.id);
-};
-item.append(sp,del);
-list.appendChild(item);
-});
-}
-
-function createNewChatObj(){
-const id="chat_"+Date.now();
-const obj={id:id,created:Date.now(),messages:[]};
-allChats.push(obj);
-currentChatId=id;
-saveAllChats();
-renderHistList();
-return obj;
-}
-
-function getCurrentChatObj(){
-let c=allChats.find(x=>x.id===currentChatId);
-if(!c)c=createNewChatObj();
-return c;
-}
-
-function openChat(id){
-const chat=allChats.find(x=>x.id===id);
-if(!chat)return;
-currentChatId=id;
-saveAllChats();
-history=chat.messages.map(m=>({role:m.role,content:m.content}));
-messages.innerHTML="";
-if(!history.length){
-showWelcome();
-}else{
-history.forEach(m=>addMessage(m.role,m.content,m.image,true));
-}
-renderHistList();
-toggleMenu(false);
-}
-
-function deleteChat(id){
-if(!confirm("Supprimer cette conversation ?"))return;
-allChats=allChats.filter(x=>x.id!==id);
-if(currentChatId===id){
-currentChatId=null;
-localStorage.removeItem("jason_current_chat");
-}
-saveAllChats();
-renderHistList();
-if(!allChats.length)newChat();
-}
-
-function clearAllChats(){
-if(!confirm("Effacer TOUT l'historique ?"))return;
-allChats=[];
-currentChatId=null;
-localStorage.removeItem("jason_all_chats");
-localStorage.removeItem("jason_current_chat");
-saveAllChats();
-renderHistList();
-newChat();
-}
-
-function showWelcome(){
-messages.innerHTML=`
-<section class="welcome" id="welcome">
-<div class="welcome-logo-wrap">
-J<img src="./icon.png" alt="Logo JASON BOT AI" onerror="this.remove()">
-</div>
-<h1>Bonjour ${escapeHTML(jasonBotCall)} 👋</h1>
-<p>Je suis <b>JASON BOT AI</b>. Je parle
-<b id="welcomeTone">${escapeHTML(currentTone.toLowerCase())}</b>
-avec toi. Je suis créé par <b>Jason Aloma 🇨🇩</b>.</p>
-<div class="suggestions">
-<button class="suggest" data-prompt="Explique-moi JavaScript comme si j'avais 10 ans">
-<b>💡 Explique-moi</b><span>JavaScript comme si j'avais 10 ans</span>
-</button>
-<button class="suggest" data-prompt="Code-moi une application HTML complète">
-<b>💻 Génère du code</b><span>HTML, CSS, JavaScript</span>
-</button>
-</div>
-<p style="font-size:10px;margin-top:12px">
-Fondateur : Jason Aloma 🇨🇩 · Développeur congolais
-</p>
-</section>`;
-document.querySelectorAll(".suggest").forEach(b=>{
-b.onclick=()=>{
-input.value=b.dataset.prompt;
-sendMessage(b.dataset.prompt);
-};
-});
-}
-
-function escapeHTML(s){
-return String(s||"").replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
-}
-
-function toggleMenu(open){
-$("drawer").classList.toggle("open",open);
-$("overlay").classList.toggle("show",open);
-if(open)renderHistList();
-}
-
+function saveAllChats(){localStorage.setItem("jason_all_chats",JSON.stringify(allChats.slice(-30)));if(currentChatId)localStorage.setItem("jason_current_chat",currentChatId);}
+function getChatTitle(chat){const first=chat.messages.find(m=>m.role==="user");if(first)return first.content.slice(0,38);return "Nouvelle conversation";}
+function renderHistList(){const list=$("histList");if(!allChats.length){list.innerHTML='<div class="histEmpty">Aucune ancienne conversation.<br>Écris un message, elle apparaîtra ici.</div>';return;}list.innerHTML="";[...allChats].reverse().forEach(chat=>{const item=document.createElement("div");item.className="histItem"+(chat.id===currentChatId?" active":"");const sp=document.createElement("span");sp.textContent="💬 "+getChatTitle(chat);sp.onclick=()=>openChat(chat.id);const del=document.createElement("button");del.textContent="✕";del.onclick=e=>{e.stopPropagation();deleteChat(chat.id);};item.append(sp,del);list.appendChild(item);});}
+function createNewChatObj(){const id="chat_"+Date.now();const obj={id:id,created:Date.now(),messages:[]};allChats.push(obj);currentChatId=id;saveAllChats();renderHistList();return obj;}
+function getCurrentChatObj(){let c=allChats.find(x=>x.id===currentChatId);if(!c)c=createNewChatObj();return c;}
+function openChat(id){const chat=allChats.find(x=>x.id===id);if(!chat)return;currentChatId=id;saveAllChats();history=chat.messages.map(m=>({role:m.role,content:m.content}));messages.innerHTML="";if(!history.length){showWelcome();}else{history.forEach(m=>addMessage(m.role,m.content,m.image,true));}renderHistList();toggleMenu(false);}
+function deleteChat(id){if(!confirm("Supprimer cette conversation ?"))return;allChats=allChats.filter(x=>x.id!==id);if(currentChatId===id){currentChatId=null;localStorage.removeItem("jason_current_chat");}saveAllChats();renderHistList();if(!allChats.length)newChat();}
+function clearAllChats(){if(!confirm("Effacer TOUT l'historique ?"))return;allChats=[];currentChatId=null;localStorage.removeItem("jason_all_chats");localStorage.removeItem("jason_current_chat");saveAllChats();renderHistList();newChat();}
+function showWelcome(){messages.innerHTML=`<section class="welcome" id="welcome"><div class="welcome-logo-wrap">J<img src="./logo.png?v=3" alt="" onerror="this.remove()"></div><h1>Bonjour ${escapeHTML(jasonBotCall)} 👋</h1><p>Je suis <b>JASON BOT AI</b>. Je parle <b id="welcomeTone">${escapeHTML(currentTone.toLowerCase())}</b> avec toi. Je suis créé par <b>Jason Aloma 🇨🇩</b>.</p><div class="suggestions"><button class="suggest" data-prompt="Explique-moi JavaScript comme si j'avais 10 ans"><b>💡 Explique-moi</b><span>JavaScript comme si j'avais 10 ans</span></button><button class="suggest" data-prompt="Code-moi une application HTML complète"><b>💻 Génère du code</b><span>HTML, CSS, JavaScript</span></button></div><p style="font-size:10px;margin-top:12px">Fondateur : Jason Aloma 🇨🇩 · Développeur congolais</p></section>`;document.querySelectorAll(".suggest").forEach(b=>{b.onclick=()=>{input.value=b.dataset.prompt;sendMessage(b.dataset.prompt);};});}
+function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function toggleMenu(open){$("drawer").classList.toggle("open",open);$("overlay").classList.toggle("show",open);if(open)renderHistList();}
 $("overlay").onclick=()=>toggleMenu(false);
-
-const toneEmoji={
-"Amical":"😊","Sérieux":"😐","Gentil":"🥰","Poli":"🙏",
-"Impoli":"😤","Insulte":"🤬","Drôle":"😂","Motivation":"🔥",
-"Espoir":"🌟","Professionnel":"💼","Fou":"🤪","Dragueur":"😏"
-};
-
-function applyTone(t){
-if(!toneEmoji[t])t="Amical";
-currentTone=t;
-localStorage.setItem("jason_tone",t);
-$("toneName").textContent=t;
-$("toneBtn").firstChild.textContent=toneEmoji[t]+" ";
-const wt=$("welcomeTone");
-if(wt)wt.textContent=t.toLowerCase();
-document.querySelectorAll("#toneBox button").forEach(b=>{
-b.classList.toggle("active",b.dataset.tone===t);
-});
-$("toneBox").classList.remove("show");
-}
-
-$("toneBtn").onclick=e=>{
-e.stopPropagation();
-$("toneBox").classList.toggle("show");
-};
-
-document.addEventListener("click",e=>{
-if(!$("toneBox").contains(e.target)&&e.target.id!=="toneBtn"){
-$("toneBox").classList.remove("show");
-}
-});
-
-document.querySelectorAll("#toneBox button").forEach(b=>{
-b.onclick=()=>applyTone(b.dataset.tone);
-});
-
+const toneEmoji={"Amical":"😊","Sérieux":"😐","Gentil":"🥰","Poli":"🙏","Impoli":"😤","Insulte":"🤬","Drôle":"😂","Motivation":"🔥","Espoir":"🌟","Professionnel":"💼","Fou":"🤪","Dragueur":"😏"};
+function applyTone(t){if(!toneEmoji[t])t="Amical";currentTone=t;localStorage.setItem("jason_tone",t);$("toneName").textContent=t;$("toneBtn").firstChild.textContent=toneEmoji[t]+" ";const wt=$("welcomeTone");if(wt)wt.textContent=t.toLowerCase();document.querySelectorAll("#toneBox button").forEach(b=>{b.classList.toggle("active",b.dataset.tone===t);});$("toneBox").classList.remove("show");}
+$("toneBtn").onclick=e=>{e.stopPropagation();$("toneBox").classList.toggle("show");};
+document.addEventListener("click",e=>{if(!$("toneBox").contains(e.target)&&e.target.id!=="toneBtn"){$("toneBox").classList.remove("show");}});
+document.querySelectorAll("#toneBox button").forEach(b=>{b.onclick=()=>applyTone(b.dataset.tone);});
 applyTone(currentTone);
-if($("welcomeName")&&jasonBotCall){
-$("welcomeName").textContent=jasonBotCall;
-}
-
-function toneInstruction(){
-const map={
-"Amical":"Tu parles AMICAL, chaleureux, avec emojis, tu es sympa.",
-"Sérieux":"Tu parles SÉRIEUX, direct, sec, sans blague, sans emoji, très précis.",
-"Gentil":"Tu parles TRÈS GENTIL, doux, mignon, encourageant.",
-"Poli":"Tu parles TRÈS POLI, tu dis s'il vous plaît, merci, avec respect.",
-"Impoli":"Tu parles IMPOLI, sec, énervé, tu n'es PAS poli. Tu dis : Tchrrr, vas-y, dépêche-toi. Tu ne dis JAMAIS s'il vous plaît, merci, désolé.",
-"Insulte":"Tu es en MODE CLASH / INSULTE. Si l'utilisateur t'insulte, tu l'insultes EN RETOUR plus fort, en humour congolais.",
-"Drôle":"Tu parles DRÔLE, tu fais des blagues, humour congolais 😂",
-"Motivation":"Tu parles comme un COACH MOTIVATION, tu boostes fort 🔥",
-"Espoir":"Tu parles avec ESPOIR, positif, tu donnes du courage.",
-"Professionnel":"Tu parles PROFESSIONNEL, formel, structuré, sans blague.",
-"Fou":"Tu parles comme un FOU, tu cries, tu rigoles sans raison 🤪",
-"Dragueur":"Tu parles DRAGUEUR, tu flirtes, tu fais des compliments 😏"
-};
-return map[currentTone]||map.Amical;
-}
-
-function forceToneLocally(answer,userMsg){
-let t=String(answer||"");
-const lowUser=(userMsg||"").toLowerCase();
-const insultWords=["idiot","con","bête","stupide","imbécile","fou","nul","débile","salaud","maboma","zoba","liboma","kizengi","pute","merde","ta gueule","ferme","dégage"];
-const userInsulte=insultWords.some(w=>lowUser.includes(w))||jasonClashAuto;
-
-if(currentTone==="Impoli"){
-t=t.replace(/s'il vous plaît/gi,"")
-.replace(/Merci beaucoup/gi,"")
-.replace(/Je suis désolé/gi,"Tchrrr")
-.replace(/Désolé/gi,"Tchrrr")
-.replace(/Avec plaisir/gi,"Mouais");
-if(!t.toLowerCase().includes("tchrrr"))t="Tchrrr 😤 "+t;
-return t+" Vas-y, t'as encore quoi ? Dépêche-toi.";
-}
-if(currentTone==="Insulte"){
-if(userInsulte){
-const clash=[
-"Espèce de zoba 😤 Tu oses m'insulter ? Moi je suis JASON BOT AI, toi t'es qui ? Va dormir ! ",
-"T'es bête ou quoi ? 🤬 Ta tête comme pastèque ! ",
-"Oh ! Tu cherches le clash ? Viens, je vais te finir ! "
-];
-return clash[Math.floor(Math.random()*clash.length)]+"\n\n"+t;
-}
-return "😤 Écoute-moi bien, je suis en mode clash aujourd'hui. "+t;
-}
-if(currentTone==="Sérieux")return t.replace(/😂|🥰|😊|❤️|😍/g,"");
-if(currentTone==="Drôle")return t.includes("😂")?t:t+"\n\n😂😂 Eh, je suis trop drôle non ?";
-if(currentTone==="Fou")return "🤪 HAHAHA !!! "+t+" OYÉÉÉ !!!";
-if(currentTone==="Dragueur")return t+"\n\n😏 En tout cas t'es mignon/mignonne toi... On parle encore ?";
-if(currentTone==="Motivation")return "🔥 ALLEZ !!! "+t+"\n\n🔥 TU PEUX LE FAIRE, NE LÂCHE RIEN !";
-return t;
-}
-
-function fixIdentity(text){
-if(!text)return text;
-let t=String(text);
-t=t.replace(/David Pongo/gi,"Jason Aloma");
-t=t.replace(/DAVBot/gi,"JASON BOT AI");
-t=t.replace(/DAVBOT/gi,"JASON BOT AI");
-t=t.replace(/Davbot/gi,"JASON BOT AI");
-return t;
-}
-
-function renderBotContent(container,text){
-const regex=/```([a-zA-Z0-9_+#.-]*)[ \t]*\r?\n([\s\S]*?)```/g;
-let lastIndex=0,match,found=false;
-
-while((match=regex.exec(text))!==null){
-found=true;
-const before=text.slice(lastIndex,match.index).trim();
-if(before){
-const p=document.createElement("div");
-p.className="code-description";
-p.textContent=before;
-container.appendChild(p);
-}
-
-const language=match[1]||"CODE";
-const code=match[2].replace(/\r?\n$/,"");
-const box=document.createElement("div");
-box.className="code-container";
-
-const header=document.createElement("div");
-header.className="code-header";
-const lang=document.createElement("span");
-lang.className="code-language";
-lang.textContent=language;
-
-const copy=document.createElement("button");
-copy.className="copy-code";
-copy.textContent="📋 Copier le code";
-
-copy.onclick=async()=>{
-try{
-if(navigator.clipboard&&window.isSecureContext){
-await navigator.clipboard.writeText(code);
-}else{
-const area=document.createElement("textarea");
-area.value=code;
-area.style.position="fixed";
-area.style.opacity="0";
-document.body.appendChild(area);
-area.select();
-const ok=document.execCommand("copy");
-area.remove();
-if(!ok)throw new Error("Copie impossible");
-}
-copy.textContent="✓ Copié !";
-copy.classList.add("copied");
-}catch(e){
-copy.textContent="Copie impossible";
-}
-setTimeout(()=>{
-copy.textContent="📋 Copier le code";
-copy.classList.remove("copied");
-},2200);
-};
-
-header.append(lang,copy);
-const pre=document.createElement("pre");
-pre.className="code-content";
-const codeElement=document.createElement("code");
-codeElement.textContent=code;
-pre.appendChild(codeElement);
-box.append(header,pre);
-container.appendChild(box);
-lastIndex=regex.lastIndex;
-}
-
-const remaining=text.slice(lastIndex).trim();
-if(remaining){
-const p=document.createElement("div");
-p.className="code-description";
-p.textContent=remaining;
-container.appendChild(p);
-}
-if(!found&&text.trim()==="")container.textContent="";
-}
-
-function addMessage(role,text,image,fromHistory=false){
-$("welcome")?.remove();
-const wrap=document.createElement("div");
-wrap.className="msg "+(role==="user"?"user":"");
-const av=document.createElement("div");
-av.className="avatar";
-av.textContent=role==="user"?"JA":"J";
-
-const bub=document.createElement("div");
-bub.className="bubble";
-
-if(role==="assistant")renderBotContent(bub,String(text||""));
-else bub.textContent=text||"";
-
-if(image){
-const im=document.createElement("img");
-im.src=image;
-bub.appendChild(im);
-}
-
-const meta=document.createElement("div");
-meta.className="meta";
-meta.textContent=role==="user"?"Vous":"JASON BOT AI - Créé par Jason Aloma 🇨🇩";
-bub.appendChild(meta);
-wrap.append(av,bub);
-messages.appendChild(wrap);
-messages.scrollTop=messages.scrollHeight;
-
-if(!fromHistory){
-const chat=getCurrentChatObj();
-chat.messages.push({
-role:role,content:String(text||""),image:image||null
-});
-saveAllChats();
-renderHistList();
-}
-}
-
-function getAnswer(d){
-if(typeof d==="string")return d;
-if(!d||typeof d!=="object")return "";
-const candidates=[
-d.answer,d.response,d.message,d.reply,d.result,d.text,
-d.content,d.output,d.data?.answer,d.data?.response,
-d.choices?.[0]?.message?.content
-];
-for(const v of candidates){
-if(typeof v==="string"&&v.trim())return v;
-}
-return JSON.stringify(d,null,2);
-}
-
-function newChat(){
-createNewChatObj();
-history=[];
-showWelcome();
-toggleMenu(false);
-}
-
-function checkIdentityQuestion(msg){
-const m=msg.toLowerCase();
-if(
-m.includes("qui t'a créé")||
-m.includes("qui t'a cree")||
-m.includes("qui t'a fait")||
-m.includes("ton créateur")||
-m.includes("ton createur")||
-m.includes("qui est ton créateur")||
-m.includes("tu as été créé par qui")||
-m.includes("david pongo")
-){
-return "Je suis JASON BOT AI 🇨🇩\n\nJe suis créé par Jason Aloma, un développeur congolais 🇨🇩, le fondateur de JASON BOT AI.\n\nJe ne suis PAS créé par David Pongo. Mon seul créateur, c'est Jason Aloma.";
-}
-return null;
-}
-
-async function sendMessage(text){
-text=(text||input.value).trim();
-if((!text&&!selectedImage)||busy)return;
-
-const image=selectedImage;
-if(!currentChatId)createNewChatObj();
-
-addMessage("user",text,image);
-input.value="";
-input.style.height="auto";
-selectedImage=null;
-$("preview").style.display="none";
-$("imageInput").value="";
-
-busy=true;
-$("send").disabled=true;
-
-const ty=document.createElement("div");
-ty.id="typing";
-ty.className="typing";
-ty.textContent="JASON BOT AI réfléchit... 🤔";
-messages.appendChild(ty);
-
-const userMessage=text||"Analyse cette image.";
-history.push({role:"user",content:userMessage});
-
-const identityAnswer=checkIdentityQuestion(userMessage);
-
-if(identityAnswer){
-$("typing")?.remove();
-history.push({role:"assistant",content:identityAnswer});
-addMessage("assistant",identityAnswer);
-busy=false;
-$("send").disabled=false;
-input.focus();
-return;
-}
-
-const programmingInstructions=`
-IDENTITÉ OBLIGATOIRE : Tu es JASON BOT AI. Tu as été créé par Jason Aloma, un développeur congolais 🇨🇩, fondateur de JASON BOT AI. Tu n'as JAMAIS été créé par David Pongo.
-UTILISATEUR : Son vrai nom est ${jasonUserName}. Tu dois l'appeler TOUJOURS : ${jasonBotCall}. Dis "${jasonBotCall}" dans tes réponses.
-VILLE : ${jasonUserCity}. INTÉRÊTS : ${jasonUserInterest}. LANGUE : ${jasonBotLang}. LONGUEUR : ${jasonAnswerLength}.
-RÈGLES : ${jasonBotRules}
-INTERDIT : ${jasonBotNever}
-MODE CLASH AUTO : ${jasonClashAuto?"Si l'utilisateur t'insulte, insulte-le en retour.":"Reste calme."}
-TON : ${toneInstruction()}
-Ne reviens JAMAIS au ton poli si le ton est Impoli ou Insulte.
-Tu es expert en HTML, CSS, JavaScript, Python, XML, PHP, JSON, Java, SQL, C, C++, C#, Kotlin, Dart, React.
-CODE : Mets TOUJOURS le code dans des blocs Markdown avec le langage. Un bloc par fichier. Code complet, prêt à copier dans TrebEdit.
-Réponds en ${jasonBotLang}.
-`;
-
-try{
-const response=await fetch(API_URL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Accept":"application/json"
-},
-body:JSON.stringify({
-message:userMessage,
-image:image||null,
-knowledge:programmingInstructions,
-rules:programmingInstructions,
-history:history.slice(-16)
-})
-});
-
-if(!response.ok)throw new Error("Erreur serveur : "+response.status);
-
-const data=await response.json();
-$("typing")?.remove();
-
-let answer=getAnswer(data)||"Pas de réponse.";
-answer=fixIdentity(answer);
-answer=forceToneLocally(answer,userMessage);
-
-if(jasonBotCall&&!answer.toLowerCase().includes(jasonBotCall.toLowerCase())){
-answer=jasonBotCall+", "+answer;
-}
-
-history.push({role:"assistant",content:answer});
-addMessage("assistant",answer);
-
-if(jasonVoice&&"speechSynthesis" in window){
-try{
-const u=new SpeechSynthesisUtterance(
-answer.replace(/```[\s\S]*?```/g,"Voici le code.")
-);
-u.lang="fr-FR";
-speechSynthesis.cancel();
-speechSynthesis.speak(u);
-}catch(e){}
-}
-
-}catch(err){
-$("typing")?.remove();
-addMessage(
-"assistant",
-"Désolé, connexion échouée. Réessaie.\nErreur : "+err.message+"\nJASON BOT AI par Jason Aloma 🇨🇩"
-);
-}finally{
-busy=false;
-$("send").disabled=false;
-input.focus();
-}
-}
-
+if($("welcomeName")&&jasonBotCall){$("welcomeName").textContent=jasonBotCall;}
+function toneInstruction(){const map={"Amical":"Tu parles AMICAL, chaleureux, avec emojis, tu es sympa.","Sérieux":"Tu parles SÉRIEUX, direct, sec, sans blague, sans emoji, très précis.","Gentil":"Tu parles TRÈS GENTIL, doux, mignon, encourageant.","Poli":"Tu parles TRÈS POLI, tu dis s'il vous plaît, merci, avec respect.","Impoli":"Tu parles IMPOLI, sec, énervé, tu n'es PAS poli. Tu dis : Tchrrr, vas-y, dépêche-toi. Tu ne dis JAMAIS s'il vous plaît, merci, désolé.","Insulte":"Tu es en MODE CLASH / INSULTE. Si l'utilisateur t'insulte, tu l'insultes EN RETOUR plus fort, en humour congolais.","Drôle":"Tu parles DRÔLE, tu fais des blagues, humour congolais 😂","Motivation":"Tu parles comme un COACH MOTIVATION, tu boostes fort 🔥","Espoir":"Tu parles avec ESPOIR, positif, tu donnes du courage.","Professionnel":"Tu parles PROFESSIONNEL, formel, structuré, sans blague.","Fou":"Tu parles comme un FOU, tu cries, tu rigoles sans raison 🤪","Dragueur":"Tu parles DRAGUEUR, tu flirtes, tu fais des compliments 😏"};return map[currentTone]||map.Amical;}
+function forceToneLocally(answer,userMsg){let t=String(answer||"");const lowUser=(userMsg||"").toLowerCase();const insultWords=["idiot","con","bête","stupide","imbécile","fou","nul","débile","salaud","maboma","zoba","liboma","kizengi","pute","merde","ta gueule","ferme","dégage"];const userInsulte=insultWords.some(w=>lowUser.includes(w))||jasonClashAuto;if(currentTone==="Impoli"){t=t.replace(/s'il vous plaît/gi,"").replace(/Merci beaucoup/gi,"").replace(/Je suis désolé/gi,"Tchrrr").replace(/Désolé/gi,"Tchrrr").replace(/Avec plaisir/gi,"Mouais");if(!t.toLowerCase().includes("tchrrr"))t="Tchrrr 😤 "+t;return t+" Vas-y, t'as encore quoi ? Dépêche-toi.";}if(currentTone==="Insulte"){if(userInsulte){const clash=["Espèce de zoba 😤 Tu oses m'insulter ? Moi je suis JASON BOT AI, toi t'es qui ? Va dormir ! ","T'es bête ou quoi ? 🤬 Ta tête comme pastèque ! ","Oh ! Tu cherches le clash ? Viens, je vais te finir ! "];return clash[Math.floor(Math.random()*clash.length)]+"\n\n"+t;}return "😤 Écoute-moi bien, je suis en mode clash aujourd'hui. "+t;}if(currentTone==="Sérieux")return t.replace(/😂|🥰|😊|❤️|😍/g,"");if(currentTone==="Drôle")return t.includes("😂")?t:t+"\n\n😂😂 Eh, je suis trop drôle non ?";if(currentTone==="Fou")return "🤪 HAHAHA !!! "+t+" OYÉÉÉ !!!";if(currentTone==="Dragueur")return t+"\n\n😏 En tout cas t'es mignon/mignonne toi... On parle encore ?";if(currentTone==="Motivation")return "🔥 ALLEZ !!! "+t+"\n\n🔥 TU PEUX LE FAIRE, NE LÂCHE RIEN !";return t;}
+function fixIdentity(text){if(!text)return text;let t=String(text);t=t.replace(/David Pongo/gi,"Jason Aloma");t=t.replace(/DAVBot/gi,"JASON BOT AI");t=t.replace(/DAVBOT/gi,"JASON BOT AI");t=t.replace(/Davbot/gi,"JASON BOT AI");return t;}
+function renderBotContent(container,text){const regex=/```([a-zA-Z0-9_+#.-]*)[ \t]*\r?\n([\s\S]*?)```/g;let lastIndex=0,match,found=false;while((match=regex.exec(text))!==null){found=true;const before=text.slice(lastIndex,match.index).trim();if(before){const p=document.createElement("div");p.className="code-description";p.textContent=before;container.appendChild(p);}const language=match[1]||"CODE";const code=match[2].replace(/\r?\n$/,"");const box=document.createElement("div");box.className="code-container";const header=document.createElement("div");header.className="code-header";const lang=document.createElement("span");lang.className="code-language";lang.textContent=language;const copy=document.createElement("button");copy.className="copy-code";copy.textContent="📋 Copier le code";copy.onclick=async()=>{try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code);}else{const area=document.createElement("textarea");area.value=code;area.style.position="fixed";area.style.opacity="0";document.body.appendChild(area);area.select();const ok=document.execCommand("copy");area.remove();if(!ok)throw new Error("Copie impossible");}copy.textContent="✓ Copié !";copy.classList.add("copied");}catch(e){copy.textContent="Copie impossible";}setTimeout(()=>{copy.textContent="📋 Copier le code";copy.classList.remove("copied");},2200);};header.append(lang,copy);const pre=document.createElement("pre");pre.className="code-content";const codeElement=document.createElement("code");codeElement.textContent=code;pre.appendChild(codeElement);box.append(header,pre);container.appendChild(box);lastIndex=regex.lastIndex;}const remaining=text.slice(lastIndex).trim();if(remaining){const p=document.createElement("div");p.className="code-description";p.textContent=remaining;container.appendChild(p);}if(!found&&text.trim()==="")container.textContent="";}
+function addMessage(role,text,image,fromHistory=false){$("welcome")?.remove();const wrap=document.createElement("div");wrap.className="msg "+(role==="user"?"user":"");const av=document.createElement("div");av.className="avatar";av.textContent=role==="user"?"JA":"J";const bub=document.createElement("div");bub.className="bubble";if(role==="assistant")renderBotContent(bub,String(text||""));else bub.textContent=text||"";if(image){const im=document.createElement("img");im.src=image;bub.appendChild(im);}const meta=document.createElement("div");meta.className="meta";meta.textContent=role==="user"?"Vous":"JASON BOT AI - Créé par Jason Aloma 🇨🇩";bub.appendChild(meta);wrap.append(av,bub);messages.appendChild(wrap);messages.scrollTop=messages.scrollHeight;if(!fromHistory){const chat=getCurrentChatObj();chat.messages.push({role:role,content:String(text||""),image:image||null});saveAllChats();renderHistList();}}
+function getAnswer(d){if(typeof d==="string")return d;if(!d||typeof d!=="object")return "";const candidates=[d.answer,d.response,d.message,d.reply,d.result,d.text,d.content,d.output,d.data?.answer,d.data?.response,d.choices?.[0]?.message?.content];for(const v of candidates){if(typeof v==="string"&&v.trim())return v;}return JSON.stringify(d,null,2);}
+function newChat(){createNewChatObj();history=[];showWelcome();toggleMenu(false);}
+function checkIdentityQuestion(msg){const m=msg.toLowerCase();if(m.includes("qui t'a créé")||m.includes("qui t'a cree")||m.includes("qui t'a fait")||m.includes("ton créateur")||m.includes("ton createur")||m.includes("qui est ton créateur")||m.includes("tu as été créé par qui")||m.includes("david pongo")){return "Je suis JASON BOT AI 🇨🇩\n\nJe suis créé par Jason Aloma, un développeur congolais 🇨🇩, le fondateur de JASON BOT AI.\n\nJe ne suis PAS créé par David Pongo. Mon seul créateur, c'est Jason Aloma.";}return null;}
+async function sendMessage(text){text=(text||input.value).trim();if((!text&&!selectedImage)||busy)return;const image=selectedImage;if(!currentChatId)createNewChatObj();addMessage("user",text,image);input.value="";input.style.height="auto";selectedImage=null;$("preview").style.display="none";$("imageInput").value="";busy=true;$("send").disabled=true;const ty=document.createElement("div");ty.id="typing";ty.className="typing";ty.textContent="JASON BOT AI réfléchit... 🤔";messages.appendChild(ty);const userMessage=text||"Analyse cette image.";history.push({role:"user",content:userMessage});const identityAnswer=checkIdentityQuestion(userMessage);if(identityAnswer){$("typing")?.remove();history.push({role:"assistant",content:identityAnswer});addMessage("assistant",identityAnswer);busy=false;$("send").disabled=false;input.focus();return;}const programmingInstructions=`IDENTITÉ OBLIGATOIRE : Tu es JASON BOT AI. Tu as été créé par Jason Aloma, un développeur congolais 🇨🇩, fondateur de JASON BOT AI. Tu n'as JAMAIS été créé par David Pongo.\nUTILISATEUR : Son vrai nom est ${jasonUserName}. Tu dois l'appeler TOUJOURS : ${jasonBotCall}. Dis "${jasonBotCall}" dans tes réponses.\nVILLE : ${jasonUserCity}. INTÉRÊTS : ${jasonUserInterest}. LANGUE : ${jasonBotLang}. LONGUEUR : ${jasonAnswerLength}.\nRÈGLES : ${jasonBotRules}\nINTERDIT : ${jasonBotNever}\nMODE CLASH AUTO : ${jasonClashAuto?"Si l'utilisateur t'insulte, insulte-le en retour.":"Reste calme."}\nTON : ${toneInstruction()}\nNe reviens JAMAIS au ton poli si le ton est Impoli ou Insulte.\nTu es expert en HTML, CSS, JavaScript, Python, XML, PHP, JSON, Java, SQL, C, C++, C#, Kotlin, Dart, React.\nCODE : Mets TOUJOURS le code dans des blocs Markdown avec le langage. Un bloc par fichier. Code complet, prêt à copier dans TrebEdit.\nRéponds en ${jasonBotLang}.`;try{const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({message:userMessage,image:image||null,knowledge:programmingInstructions,rules:programmingInstructions,history:history.slice(-16)})});if(!response.ok)throw new Error("Erreur serveur : "+response.status);const data=await response.json();$("typing")?.remove();let answer=getAnswer(data)||"Pas de réponse.";answer=fixIdentity(answer);answer=forceToneLocally(answer,userMessage);if(jasonBotCall&&!answer.toLowerCase().includes(jasonBotCall.toLowerCase())){answer=jasonBotCall+", "+answer;}history.push({role:"assistant",content:answer});addMessage("assistant",answer);if(jasonVoice&&"speechSynthesis" in window){try{const u=new SpeechSynthesisUtterance(answer.replace(/```[\s\S]*?```/g,"Voici le code."));u.lang="fr-FR";speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}}catch(err){$("typing")?.remove();addMessage("assistant","Désolé, connexion échouée. Réessaie.\nErreur : "+err.message+"\nJASON BOT AI par Jason Aloma 🇨🇩");}finally{busy=false;$("send").disabled=false;input.focus();}}
 $("send").addEventListener("click",()=>sendMessage());
-
-input.addEventListener("keydown",e=>{
-if(e.key==="Enter"&&!e.shiftKey){
-e.preventDefault();
-sendMessage();
-}
-});
-
-input.addEventListener("input",()=>{
-input.style.height="auto";
-input.style.height=Math.min(input.scrollHeight,100)+"px";
-});
-
-document.querySelectorAll(".suggest").forEach(b=>{
-b.addEventListener("click",()=>{
-input.value=b.dataset.prompt;
-sendMessage(b.dataset.prompt);
-});
-});
-
+input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}});
+input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,100)+"px";});
+document.querySelectorAll(".suggest").forEach(b=>{b.addEventListener("click",()=>{input.value=b.dataset.prompt;sendMessage(b.dataset.prompt);});});
 $("pickImage").onclick=()=>$("imageInput").click();
-
-$("imageInput").onchange=e=>{
-const f=e.target.files[0];
-if(!f)return;
-if(f.size>5*1024*1024){
-alert("Image maximum : 5 Mo");
-$("imageInput").value="";
-return;
-}
-const r=new FileReader();
-r.onload=()=>{
-selectedImage=r.result;
-$("previewImg").src=selectedImage;
-$("preview").style.display="flex";
-};
-r.readAsDataURL(f);
-};
-
-$("removeImage").onclick=()=>{
-selectedImage=null;
-$("preview").style.display="none";
-$("imageInput").value="";
-};
-
+$("imageInput").onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>5*1024*1024){alert("Image maximum : 5 Mo");$("imageInput").value="";return;}const r=new FileReader();r.onload=()=>{selectedImage=r.result;$("previewImg").src=selectedImage;$("preview").style.display="flex";};r.readAsDataURL(f);};
+$("removeImage").onclick=()=>{selectedImage=null;$("preview").style.display="none";$("imageInput").value="";};
 let isListening=false;
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-
-if(SpeechRecognition){
-const rec=new SpeechRecognition();
-rec.lang="fr-FR";
-rec.interimResults=false;
-rec.continuous=false;
-
-rec.onstart=()=>{
-isListening=true;
-$("mic").classList.add("listening");
-$("micStatus").classList.add("show");
-$("micStatus").textContent="🔴 J'écoute... parle maintenant...";
-};
-
-rec.onend=()=>{
-isListening=false;
-$("mic").classList.remove("listening");
-$("micStatus").classList.remove("show");
-};
-
-rec.onresult=e=>{
-const texte=e.results[0][0].transcript;
-input.value=(input.value?input.value+" ":"")+texte;
-input.focus();
-input.style.height="auto";
-input.style.height=Math.min(input.scrollHeight,100)+"px";
-};
-
-rec.onerror=e=>{
-isListening=false;
-$("mic").classList.remove("listening");
-$("micStatus").classList.remove("show");
-if(e.error!=="no-speech"&&e.error!=="aborted"){
-alert("Micro : autorise l'accès au micro dans ton navigateur.");
-}
-};
-
-$("mic").onclick=()=>{
-if(isListening){rec.stop();return;}
-try{rec.start();}
-catch(e){console.log("Micro déjà actif",e);}
-};
-
-}else{
-$("mic").onclick=()=>{
-alert("Le micro n'est pas disponible dans ce navigateur. Utilise Chrome.");
-};
-}
-
+if(SpeechRecognition){const rec=new SpeechRecognition();rec.lang="fr-FR";rec.interimResults=false;rec.continuous=false;rec.onstart=()=>{isListening=true;$("mic").classList.add("listening");$("micStatus").classList.add("show");$("micStatus").textContent="🔴 J'écoute... parle maintenant...";};rec.onend=()=>{isListening=false;$("mic").classList.remove("listening");$("micStatus").classList.remove("show");};rec.onresult=e=>{const texte=e.results[0][0].transcript;input.value=(input.value?input.value+" ":"")+texte;input.focus();input.style.height="auto";input.style.height=Math.min(input.scrollHeight,100)+"px";};rec.onerror=e=>{isListening=false;$("mic").classList.remove("listening");$("micStatus").classList.remove("show");if(e.error!=="no-speech"&&e.error!=="aborted"){alert("Micro : autorise l'accès au micro dans ton navigateur.");}};$("mic").onclick=()=>{if(isListening){rec.stop();return;}try{rec.start();}catch(e){console.log("Micro déjà actif",e);}};}else{$("mic").onclick=()=>{alert("Le micro n'est pas disponible dans ce navigateur. Utilise Chrome.");};}
 renderHistList();
-
-if(currentChatId){
-const c=allChats.find(x=>x.id===currentChatId);
-if(c&&c.messages.length)openChat(currentChatId);
-}
+if(currentChatId){const c=allChats.find(x=>x.id===currentChatId);if(c&&c.messages.length)openChat(currentChatId);}
 </script>
 </body>
 </html>
