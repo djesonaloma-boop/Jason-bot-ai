@@ -42,7 +42,8 @@ textarea::placeholder,input::placeholder{color:#666}
 <body>
 <div class="wrap">
 <div class="top">
-<button class="back" onclick="location.href='Index.html'">←</button>
+<!-- ✅ BOUTON RETOUR CORRIGÉ - VA SUR / ET PAS SUR Index.html -->
+<button class="back" onclick="goHome()">←</button>
 <div><b>⚙️ Paramètres</b><div style="font-size:11px;color:#9CA3AF">JASON BOT AI - Créé par Jason Aloma 🇨🇩</div></div>
 </div>
 
@@ -157,6 +158,23 @@ textarea::placeholder,input::placeholder{color:#666}
 
 <script>
 const $=id=>document.getElementById(id);
+
+// ✅ BOUTON RETOUR QUI MARCHE SUR VERCEL
+function goHome(){
+  // Si tu es venu depuis le chat, on revient en arrière
+  if(window.history.length > 1){
+    window.history.back();
+    // Sécurité : si après 600ms on est toujours sur parametres, on force vers /
+    setTimeout(()=>{
+      if(location.pathname.toLowerCase().includes("parametre")){
+        location.href = "/";
+      }
+    }, 600);
+  } else {
+    location.href = "/";
+  }
+}
+
 const keys=["userName","botCall","userAge","userGender","defaultTone","botLang","botRules","botNever","userCity","userInterest","answerLength"];
 // Charger
 keys.forEach(k=>{const v=localStorage.getItem("jason_"+k); if(v) $(k).value=v;});
@@ -181,10 +199,10 @@ updatePreview();
 function saveAll(){
   keys.forEach(k=>localStorage.setItem("jason_"+k, $(k).value||""));
   ["swVoice","swMemory","swClash","swJoke"].forEach(id=>localStorage.setItem("jason_"+id, $(id).classList.contains("on")?"1":"0"));
-  // Si le ton par défaut change, on l'applique aussi dans le chat
   if($("defaultTone").value) localStorage.setItem("jason_tone",$("defaultTone").value);
   $("okMsg").classList.add("show");
-  setTimeout(()=>location.href="Index.html",1200);
+  // ✅ CORRIGÉ : on va sur / et pas sur Index.html
+  setTimeout(()=>location.href="/",1200);
 }
 function testBot(){
   const call=$("botCall").value||"Patron";
