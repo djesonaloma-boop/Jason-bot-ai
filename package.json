@@ -1,0 +1,12 @@
+{
+  "name": "jasonbot-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "JASONBOT AI — assistant intelligent créé par Jason Aloma",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node -e \"console.log('Déployez ce projet avec Vercel')\""
+  }
+}

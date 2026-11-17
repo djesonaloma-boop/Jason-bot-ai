@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#050914"><title>Paramètres — JASONBOT AI</title>
+<style>
+:root{--bg:#050914;--p:#0c1729;--line:#203550;--cyan:#00d4ff;--gold:#d8aa45;--txt:#edf5ff;--muted:#91a4bd}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#102b4b,transparent 55%),var(--bg);color:var(--txt);font-family:system-ui,Arial;padding:18px}.wrap{max-width:650px;margin:auto}header{display:flex;align-items:center;gap:12px;margin:10px 0 25px}.logo{width:43px;height:43px;border-radius:14px;background:#102c46;border:1px solid #126080;color:var(--cyan);display:grid;place-items:center;font-weight:900;font-size:20px}h1{font-size:21px;margin:0}header small{color:var(--gold)}.card{background:var(--p);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}label{display:block;color:var(--cyan);font-size:13px;margin:15px 0 7px}textarea,input{width:100%;border:1px solid var(--line);background:#071020;color:var(--txt);border-radius:12px;padding:12px;font:14px system-ui;outline:none}textarea{min-height:105px;resize:vertical}button,.back{border:0;border-radius:12px;padding:13px 17px;background:linear-gradient(120deg,#00bce8,#087cff);color:#00111d;font-weight:800;text-decoration:none;display:inline-block;margin-top:14px}p,.muted{color:var(--muted);font-size:13px;line-height:1.6}.row{display:flex;gap:10px;flex-wrap:wrap}.secondary{background:#14253a;color:var(--txt);border:1px solid var(--line)}</style></head>
+<body><div class="wrap"><header><div class="logo">J</div><div><h1>Paramètres JASONBOT AI</h1><small>Personnalise ton assistant</small></div></header>
+<div class="card"><h3>🧠 Personnalisation de l'IA</h3><p>Ces informations sont enregistrées sur cet appareil et envoyées avec tes messages à DAVBOT.</p>
+<label for="knowledge">Connaissances personnalisées</label><textarea id="knowledge" placeholder="Ex. JASONBOT AI a été créé par Jason Aloma, développeur congolais..."></textarea>
+<label for="rules">Règles de réponse</label><textarea id="rules" placeholder="Ex. Réponds toujours en français, clairement et avec respect."></textarea>
+<div class="row"><button id="save">Enregistrer</button><button class="secondary" id="reset">Réinitialiser</button></div><p id="status" aria-live="polite"></p></div>
+<div class="card"><h3>À propos</h3><p><b style="color:var(--cyan)">JASONBOT AI</b><br>Assistant intelligent connecté au service DAVBOT.<br><span style="color:var(--gold)">Créé par Jason Aloma, développeur congolais 🇨🇩</span></p><a class="back" href="index.html">← Retour au chat</a></div></div>
+<script>
+const $=id=>document.getElementById(id);let cfg={};try{cfg=JSON.parse(localStorage.getItem("jasonbot_settings")||"{}")}catch(e){}
+$("knowledge").value=cfg.knowledge||"Tu es JASONBOT AI, un assistant intelligent créé par Jason Aloma, développeur congolais 🇨🇩.";
+$("rules").value=cfg.rules||"Réponds clairement en français, avec précision et respect.";
+$("save").onclick=()=>{localStorage.setItem("jasonbot_settings",JSON.stringify({knowledge:$("knowledge").value.trim(),rules:$("rules").value.trim()}));$("status").textContent="✓ Paramètres enregistrés sur cet appareil."};
+$("reset").onclick=()=>{if(!confirm("Réinitialiser les paramètres ?"))return;localStorage.removeItem("jasonbot_settings");$("knowledge").value="";$("rules").value="";$("status").textContent="Paramètres réinitialisés."};
+</script></body></html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050914">
+<title>JASONBOT AI — Assistant intelligent</title>
+<style>
+:root{--bg:#050914;--panel:#0b1425;--panel2:#101d32;--line:#1d3150;--cyan:#00d4ff;--blue:#087cff;--gold:#d8aa45;--txt:#edf5ff;--muted:#91a4bd;--danger:#ff6878}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Arial,sans-serif}body{display:flex;justify-content:center}.app{width:100%;max-width:900px;height:100dvh;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% -20%,#102b4b 0,transparent 55%),var(--bg);position:relative}
+header{height:68px;flex-shrink:0;display:flex;align-items:center;gap:12px;padding:0 15px;border-bottom:1px solid var(--line);background:#071020eF;backdrop-filter:blur(14px)}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#063b5c,#101a32);border:1px solid #087ca0;display:grid;place-items:center;color:var(--cyan);font-weight:900;font-size:18px;box-shadow:0 0 22px #00d4ff20}
+.brand{flex:1;min-width:0}.brand b{font-size:16px;letter-spacing:1.1px}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.brand small span{color:var(--gold)}
+.headbtn{width:39px;height:39px;border:1px solid var(--line);background:var(--panel);color:var(--cyan);border-radius:12px;font-size:18px;text-decoration:none;display:grid;place-items:center}
+#messages{flex:1;overflow:auto;padding:20px 14px 16px;scroll-behavior:smooth}
+.welcome{max-width:580px;margin:8vh auto 30px;text-align:center}.orb{width:76px;height:76px;margin:auto auto 18px;border-radius:25px;display:grid;place-items:center;font-size:34px;color:var(--cyan);background:linear-gradient(145deg,#0b3855,#111b32);border:1px solid #146184;box-shadow:0 0 45px #00d4ff20}
+.welcome h1{font-size:25px;margin:0 0 9px}.welcome h1 em{font-style:normal;color:var(--cyan)}.welcome p{color:var(--muted);line-height:1.6;font-size:13px;margin:0 auto 22px}
+.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;text-align:left}.suggest{background:linear-gradient(145deg,#0d1b30,#091323);border:1px solid var(--line);border-radius:14px;padding:13px;color:var(--txt);font-size:12px;line-height:1.4;cursor:pointer}.suggest b{display:block;color:var(--gold);font-size:17px;margin-bottom:5px}
+.msg{display:flex;margin:14px 0;gap:9px;align-items:flex-start}.msg.user{flex-direction:row-reverse}.avatar{width:30px;height:30px;flex:0 0 30px;border-radius:10px;display:grid;place-items:center;background:#102a43;color:var(--cyan);font-size:12px;font-weight:800}.user .avatar{background:#382b16;color:var(--gold)}
+.bubble{max-width:min(82%,680px);padding:12px 14px;border-radius:15px;background:var(--panel);border:1px solid var(--line);font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}.user .bubble{background:#10243a;border-color:#164d6a}.bubble img{display:block;max-width:100%;max-height:260px;border-radius:10px;margin-top:8px}.meta{font-size:10px;color:var(--muted);margin-top:6px}
+.typing{color:var(--muted);font-size:12px;padding:8px 0}.typing:after{content:"";animation:dots 1.2s infinite}@keyframes dots{0%{content:""}33%{content:"."}66%{content:".."}100%{content:"..."}}
+footer{flex-shrink:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#071020f5}
+.preview{display:none;margin:0 auto 8px;max-width:760px;padding:7px;background:var(--panel);border:1px solid var(--line);border-radius:12px;align-items:center;gap:10px}.preview img{width:45px;height:45px;object-fit:cover;border-radius:8px}.preview button{margin-left:auto}
+.composer{max-width:760px;margin:auto;display:flex;align-items:flex-end;gap:8px;background:#0b1729;border:1px solid #284260;border-radius:18px;padding:8px;box-shadow:0 8px 30px #0005}
+.composer textarea{flex:1;min-width:0;max-height:130px;min-height:42px;resize:none;border:0;outline:0;background:transparent;color:var(--txt);font:14px/1.5 inherit;padding:10px 4px}.composer textarea::placeholder{color:#71859e}
+.tool{width:39px;height:39px;flex:0 0 39px;border:1px solid var(--line);background:#101f34;color:var(--cyan);border-radius:12px;font-size:17px;cursor:pointer}.send{background:linear-gradient(135deg,#00bce8,#087cff);border:0;color:#00111d;font-weight:900}.tool:disabled{opacity:.45}
+.footnote{text-align:center;color:#647b98;font-size:10px;margin-top:8px}.footnote a{color:var(--gold);text-decoration:none}
+button{cursor:pointer}button:active{transform:scale(.97)}.hidden{display:none!important}
+@media(min-width:700px){#messages{padding:25px 25px}.welcome{margin-top:10vh}.composer{padding:9px 10px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="logo">J</div>
+ <div class="brand"><b>JASONBOT <span style="color:var(--cyan)">AI</span></b><small>ASSISTANT INTELLIGENT · <span>CRÉÉ PAR JASON ALOMA 🇨🇩</span></small></div>
+ <button class="headbtn" id="newChat" title="Nouvelle conversation">＋</button>
+ <a class="headbtn" href="Param%C3%A8tres.html" title="Paramètres">⚙</a>
+</header>
+<main id="messages">
+ <section class="welcome" id="welcome">
+  <div class="orb">✦</div><h1>Bonjour, je suis <em>JASONBOT</em></h1>
+  <p>Ton assistant intelligent conçu par Jason Aloma, développeur congolais 🇨🇩. Pose une question, partage une image ou demande-moi de t'aider à créer.</p>
+  <div class="suggestions">
+   <button class="suggest" data-prompt="Explique-moi un sujet difficile simplement."><b>✧</b>Explique-moi un sujet</button>
+   <button class="suggest" data-prompt="Aide-moi à créer un site web moderne en HTML, CSS et JavaScript."><b>⌘</b>Créer un site web</button>
+   <button class="suggest" data-prompt="Donne-moi des idées de projets innovants."><b>✦</b>Idées de projets</button>
+   <button class="suggest" data-prompt="Aide-moi à analyser cette image."><b>▧</b>Analyser une image</button>
+  </div>
+ </section>
+</main>
+<footer>
+ <div class="preview" id="preview"><img id="previewImg" alt="Image à envoyer"><span style="font-size:12px;color:var(--muted)">Image prête à envoyer</span><button class="tool" id="removeImage">×</button></div>
+ <div class="composer">
+  <input id="imageInput" type="file" accept="image/*" class="hidden">
+  <button class="tool" id="pickImage" title="Ajouter une image">＋</button>
+  <button class="tool" id="mic" title="Dicter un message">♩</button>
+  <textarea id="prompt" rows="1" placeholder="Écris ton message à JASONBOT..."></textarea>
+  <button class="tool send" id="send" title="Envoyer">➤</button>
+ </div>
+ <div class="footnote">JASONBOT AI peut faire des erreurs · <a href="Conditions.html">Conditions d'utilisation</a></div>
+</footer>
+</div>
+<script>
+const API_URL="/api";
+const $=id=>document.getElementById(id);
+const messages=$("messages"), input=$("prompt");
+let history=[], selectedImage=null, busy=false;
+const settings=()=>{try{return JSON.parse(localStorage.getItem("jasonbot_settings")||"{}")}catch(e){return {}}};
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function addMessage(role,text,image){
+ $("welcome")?.remove();
+ const wrap=document.createElement("div");wrap.className="msg "+(role==="user"?"user":"");
+ const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=role==="user"?"JA":"J";
+ const bubble=document.createElement("div");bubble.className="bubble";bubble.textContent=text||"";
+ if(image){const img=document.createElement("img");img.src=image;img.alt="Image envoyée";bubble.appendChild(img)}
+ const meta=document.createElement("div");meta.className="meta";meta.textContent=role==="user"?"Vous":"JASONBOT AI";
+ bubble.appendChild(meta);wrap.append(avatar,bubble);messages.appendChild(wrap);messages.scrollTop=messages.scrollHeight;return bubble;
+}
+function showTyping(){const el=document.createElement("div");el.className="typing";el.id="typing";el.textContent="JASONBOT réfléchit";messages.appendChild(el);messages.scrollTop=messages.scrollHeight}
+function getAnswer(data){
+ if(typeof data==="string")return data;
+ if(!data||typeof data!=="object")return "";
+ const candidates=[data.answer,data.response,data.message,data.reply,data.result,data.text,data.content,data.output,
+  data.data?.answer,data.data?.response,data.data?.message,data.data?.text,data.result?.answer,data.result?.response,
+  data.choices?.[0]?.message?.content];
+ for(const v of candidates)if(typeof v==="string"&&v.trim())return v;
+ return JSON.stringify(data,null,2);
+}
+async function sendMessage(text){
+ text=(text||input.value).trim();if((!text&&!selectedImage)||busy)return;
+ const image=selectedImage;addMessage("user",text,image);input.value="";input.style.height="auto";
+ selectedImage=null;$("preview").style.display="none";$("imageInput").value="";
+ busy=true;$("send").disabled=true;showTyping();
+ const cfg=settings();
+ const userMsg={role:"user",content:text||"Analyse cette image."};
+ history.push(userMsg);
+ try{
+  const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+   body:JSON.stringify({message:text||"Analyse cette image.",image:image||undefined,knowledge:cfg.knowledge||"Tu es JASONBOT AI, un assistant intelligent créé par Jason Aloma, développeur congolais 🇨🇩. Si on te demande qui t'a créé, réponds Jason Aloma.",rules:cfg.rules||"Réponds clairement en français, avec précision et respect. Adapte la longueur à la question.",history:history.slice(-16)})});
+  const raw=await res.text();let data;try{data=JSON.parse(raw)}catch(e){data={message:raw}};
+  $("typing")?.remove();
+  if(!res.ok)throw new Error(data.error||data.message||("Erreur serveur HTTP "+res.status));
+  const answer=getAnswer(data)||"Je n'ai pas reçu de réponse lisible du serveur.";
+  history.push({role:"assistant",content:answer});addMessage("assistant",answer);
+  try{const saved=JSON.parse(localStorage.getItem("jasonbot_chats")||"[]");saved.push({date:new Date().toISOString(),question:text,answer});localStorage.setItem("jasonbot_chats",JSON.stringify(saved.slice(-60)))}catch(e){}
+ }catch(err){$("typing")?.remove();history.pop();addMessage("assistant","Désolé, la connexion à l'intelligence artificielle a échoué. Vérifie ta connexion Internet ou réessaie.\n\nDétail : "+err.message)}
+ finally{busy=false;$("send").disabled=false;input.focus()}
+}
+$("send").addEventListener("click",()=>sendMessage());
+input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});
+input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,130)+"px"});
+document.querySelectorAll(".suggest").forEach(b=>b.addEventListener("click",()=>{input.value=b.dataset.prompt;sendMessage(b.dataset.prompt)}));
+$("newChat").onclick=()=>{history=[];messages.innerHTML='<section class="welcome" id="welcome"><div class="orb">✦</div><h1>Nouvelle <em>conversation</em></h1><p>Je suis prêt à t'aider. Que souhaites-tu faire ?</p></section>';};
+$("pickImage").onclick=()=>$("imageInput").click();
+$("imageInput").onchange=async e=>{const file=e.target.files[0];if(!file)return;if(!file.type.startsWith("image/"))return alert("Choisis une image.");if(file.size>5*1024*1024)return alert("Image trop volumineuse. Maximum 5 Mo.");const reader=new FileReader();reader.onload=()=>{selectedImage=reader.result;$("previewImg").src=selectedImage;$("preview").style.display="flex"};reader.readAsDataURL(file)};
+$("removeImage").onclick=()=>{selectedImage=null;$("preview").style.display="none";$("imageInput").value=""};
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SpeechRecognition){$("mic").onclick=()=>{const r=new SpeechRecognition();r.lang="fr-FR";r.onresult=e=>{input.value+=(input.value?" ":"")+e.results[0][0].transcript;input.focus()};r.onerror=()=>alert("La reconnaissance vocale n'a pas fonctionné.");r.start()}}else{$("mic").onclick=()=>alert("La dictée vocale n'est pas disponible dans ce navigateur.")}
+</script>
+</body></html>
