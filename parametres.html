@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#0B0B1A">
 <title>Paramètres - JASON BOT AI</title>
-<!-- ✅ ICÔNE ICI AUSSI -->
-<link rel="icon" type="image/png" href="icon.png">
-<link rel="shortcut icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
-<meta property="og:image" content="icon.png">
+<!-- ✅ ICÔNE ICI AUSSI - NOUVEAU NOM -->
+<link rel="icon" type="image/png" href="./file_00000000760c82088f07dedfd4054f40.png">
+<link rel="shortcut icon" type="image/png" href="./file_00000000760c82088f07dedfd4054f40.png">
+<link rel="apple-touch-icon" href="./file_00000000760c82088f07dedfd4054f40.png">
+<meta property="og:image" content="./file_00000000760c82088f07dedfd4054f40.png">
 <style>
 :root{--bg:#0B0B1A;--panel:#15152B;--line:#2A2A4A;--txt:#fff;--muted:#9CA3AF;--gold:#FFD700}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Arial,sans-serif}
 .wrap{max-width:600px;margin:auto;padding:12px;padding-bottom:40px}
 .top{display:flex;align-items:center;gap:10px;padding:6px 0 14px}
 .back{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#1E1E35;color:white;font-size:18px;cursor:pointer}
-.top-icon{width:42px;height:42px;border-radius:12px;object-fit:cover;border:1px solid #087ca0;flex-shrink:0}
+.top-icon-wrap{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#063b5c,#101a32);border:1px solid #087ca0;display:grid;place-items:center;color:#00d4ff;font-weight:900;font-size:18px;overflow:hidden;position:relative;flex-shrink:0}
+.top-icon-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .top b{font-size:18px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
 .card h3{margin:0 0 4px;font-size:15px}
@@ -42,20 +43,21 @@ textarea::placeholder,input::placeholder{color:#666}
 .ok{display:none;background:#14532d;border:1px solid #22c55e;color:#4ade80;padding:10px;border-radius:12px;font-size:13px;text-align:center;margin-top:10px}
 .ok.show{display:block}
 .preview{background:#0F0F22;border:1px solid #087ca0;border-radius:12px;padding:12px;font-size:13px;line-height:1.6;margin-top:10px;display:flex;gap:10px;align-items:flex-start}
-.preview img{width:40px;height:40px;border-radius:10px;object-fit:cover;border:1px solid #087ca0;flex-shrink:0}
+.preview-icon-wrap{width:40px;height:40px;border-radius:10px;background:#0B3855;border:1px solid #087ca0;display:grid;place-items:center;color:#00d4ff;font-weight:900;overflow:hidden;position:relative;flex-shrink:0}
+.preview-icon-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .preview b{color:#00d4ff}
-.footer-logo{display:block;width:56px;height:56px;border-radius:14px;object-fit:cover;border:2px solid var(--gold);margin:0 auto 6px}
+.footer-logo-wrap{width:56px;height:56px;border-radius:14px;background:linear-gradient(145deg,#0b3855,#111b32);border:2px solid var(--gold);display:grid;place-items:center;color:#00d4ff;font-weight:900;font-size:22px;overflow:hidden;position:relative;margin:0 auto 6px}
+.footer-logo-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="top">
 <button class="back" onclick="goHome()">←</button>
-<img src="icon.png" class="top-icon" alt="JASON BOT AI">
+<div class="top-icon-wrap">J<img src="./file_00000000760c82088f07dedfd4054f40.png?v=4" alt="" onerror="this.remove()"></div>
 <div><b>⚙️ Paramètres</b><div style="font-size:11px;color:#9CA3AF">JASON BOT AI - Créé par Jason Aloma 🇨🇩</div></div>
 </div>
 
-<!-- 👤 COMMENT LE BOT DOIT T'APPELER -->
 <div class="card">
 <h3>👤 Comment le bot doit t'appeler ?</h3>
 <p>C'est ici que tu dis au bot comment il doit te parler. Il va utiliser ce nom dans toutes ses réponses.</p>
@@ -89,7 +91,6 @@ textarea::placeholder,input::placeholder{color:#666}
 </select>
 </div>
 
-<!-- 🤖 PROGRAMMATION DU BOT -->
 <div class="card">
 <h3>🤖 Programmation du bot</h3>
 <p>Programme le caractère de JASON BOT AI. Écris ce que tu veux qu'il fasse toujours.</p>
@@ -131,7 +132,6 @@ textarea::placeholder,input::placeholder{color:#666}
 <input id="userInterest" placeholder="Ex : Code, foot, musique, business...">
 </div>
 
-<!-- ⚡ AUTRES CHOSES -->
 <div class="card">
 <h3>⚡ Autres choses</h3>
 
@@ -153,7 +153,7 @@ textarea::placeholder,input::placeholder{color:#666}
 
 <div class="card">
 <h3>👀 Aperçu - Comment il va te parler</h3>
-<div class="preview" id="previewWrap"><img src="icon.png" alt="JASON BOT AI"><div id="preview">Choisis un nom, et regarde ici...</div></div>
+<div class="preview" id="previewWrap"><div class="preview-icon-wrap">J<img src="./file_00000000760c82088f07dedfd4054f40.png?v=4" alt="" onerror="this.remove()"></div><div id="preview">Choisis un nom, et regarde ici...</div></div>
 <button class="btn btn-test" onclick="testBot()">▶️ Tester comment il m'appelle</button>
 </div>
 
@@ -161,7 +161,7 @@ textarea::placeholder,input::placeholder{color:#666}
 <button class="btn btn-reset" onclick="resetAll()">🗑️ Tout effacer / Réinitialiser</button>
 <div class="ok" id="okMsg">✅ Enregistré ! Retourne dans JASON BOT AI, il va t'appeler comme tu as choisi.</div>
 
-<p style="text-align:center;color:#777;font-size:11px;margin-top:14px"><img src="icon.png" class="footer-logo" alt="JASON BOT AI">JASON BOT AI - Créé par Jason Aloma 🇨🇩 · Développeur congolais</p>
+<p style="text-align:center;color:#777;font-size:11px;margin-top:14px"><span class="footer-logo-wrap">J<img src="./file_00000000760c82088f07dedfd4054f40.png?v=4" alt="" onerror="this.remove()"></span>JASON BOT AI - Créé par Jason Aloma 🇨🇩 · Développeur congolais</p>
 </div>
 
 <script>
